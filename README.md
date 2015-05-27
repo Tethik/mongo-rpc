@@ -21,7 +21,7 @@ Client
 from mongorpc import MongoRPCClient
 
 client = MongoRPCClient()
-client.call("hello")
+client.hello()
 ```
 
 # Future work

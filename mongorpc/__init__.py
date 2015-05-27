@@ -17,6 +17,12 @@ class MongoRPCClient(object):
         args['method'] = method
         return self.db[self.collection].insert_one(args).inserted_id
 
+
+    def __getattr__(self, name):
+        def wrap(**args):
+            return self.call(name, **args)
+        return wrap
+
     # def __item__(self):
     #     pass
 
@@ -42,8 +48,6 @@ class MongoRPC(object):
             self.factory[name] = f
         else:
             self.factory[f.__name__] = f
-
-
 
     def register(self, name=""):
         def decorator(f):
@@ -80,6 +84,9 @@ class MongoRPC(object):
                 self.call(**item)
             except err as Exception:
                 self.report_failure(item, err)
+
+    def remove_all_requests(self):
+        self.db[self.collection].remove({})
 
 class ScheduledMongoRPC(MongoRPC):
     def poll(self):
