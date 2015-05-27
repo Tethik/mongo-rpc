@@ -25,7 +25,7 @@ client.hello()
 ```
 
 # Future work
-* Conform to jsonrpc standard.
+* Conform to [http://www.jsonrpc.org/specification](jsonrpc standard).
 * Save results from method call.
 * Transaction safety, to support more than one executing server?
 * Perhaps serialize method code. Eggify?
