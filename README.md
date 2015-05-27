@@ -7,7 +7,7 @@ Server
 ```
 from mongorpc import MongoRPC
 
-rpc = MongoRPC
+rpc = MongoRPC()
 
 @rpc.register()
 def hello():

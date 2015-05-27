@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from inspect import signature
+from time import sleep
 
 class MongoRPCClient(object):
     def __init__(self, mongo_uri="mongodb://localhost:27017/default",
@@ -22,9 +23,6 @@ class MongoRPCClient(object):
         def wrap(**args):
             return self.call(name, **args)
         return wrap
-
-    # def __item__(self):
-    #     pass
 
 
 
@@ -76,14 +74,14 @@ class MongoRPC(object):
 
     def run(self):
         while True:
-            sleep(self.polling_interval)
             item = self.poll()
-            if not item:
-                continue
             try:
-                self.call(**item)
-            except err as Exception:
+                if item:
+                    self.call(**item)
+                    continue
+            except Exception as err:
                 self.report_failure(item, err)
+            sleep(self.polling_interval)
 
     def remove_all_requests(self):
         self.db[self.collection].remove({})
