@@ -14,14 +14,18 @@ class MongoRPCClient(object):
         else:
             self.db = MongoClient().get_default_database()
 
-    def call(self, method, **args):
-        args['method'] = method
-        return self.db[self.collection].insert_one(args).inserted_id
+    def call(self, method, *args, **kwargs):
+        request = {
+            'method': method,
+            'args': args,
+            'kwargs': kwargs,
+        } # todo add id...
+        return self.db[self.collection].insert_one(request).inserted_id
 
 
     def __getattr__(self, name):
-        def wrap(**args):
-            return self.call(name, **args)
+        def wrap(*args, **kwargs):
+            return self.call(name, *args, **kwargs)
         return wrap
 
 
@@ -54,13 +58,15 @@ class MongoRPC(object):
         return decorator
 
 
-    def call(self, method, **kwargs):
+    def call(self, method, args, kwargs):
         f = self.factory[method]
         converted = dict()
-        args = signature(f).parameters.keys()
-        for arg in args:
-            converted[arg] = kwargs[arg]
-        return self.factory[method](**converted)
+        defined_args = signature(f).parameters.keys()
+        for arg in defined_args:
+            if arg in kwargs:
+                converted[arg] = kwargs[arg]
+        print(args)
+        return self.factory[method](*args, **converted)
 
     def report_failure(self, item, error):
         item["error"] = str(error)
@@ -77,7 +83,7 @@ class MongoRPC(object):
             item = self.poll()
             try:
                 if item:
-                    self.call(**item)
+                    self.call(item["method"], item["args"], item["kwargs"])
                     continue
             except Exception as err:
                 self.report_failure(item, err)

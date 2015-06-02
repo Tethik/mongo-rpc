@@ -8,6 +8,10 @@ class TestRPC(TestCase):
         self.rpc = MongoRPC(self.mongo_uri)
         self.rpc.remove_all_requests()
 
+    def poll_and_call(self, rpc):
+        item = rpc.poll()
+        print(item)
+        return rpc.call(item["method"], item["args"], item["kwargs"])
 
     def test_register_with_name(self):
         rpc = MongoRPC(self.mongo_uri)
@@ -18,9 +22,10 @@ class TestRPC(TestCase):
 
         client = MongoRPCClient(self.mongo_uri)
         print(client.call("woot"))
-        self.assertEqual(rpc.call(**rpc.poll()), "test")
+
+        self.assertEqual(self.poll_and_call(rpc), "test")
         print(client.woot())
-        self.assertEqual(rpc.call(**rpc.poll()), "test")
+        self.assertEqual(self.poll_and_call(rpc), "test")
 
 
     def test_register_and_call(self):
@@ -33,7 +38,7 @@ class TestRPC(TestCase):
         client = MongoRPCClient(self.mongo_uri)
         print(client.call("method"))
 
-        self.assertEqual(rpc.call(**rpc.poll()), "test")
+        self.assertEqual(self.poll_and_call(rpc), "test")
 
     def test_call_with_attribute(self):
         rpc = MongoRPC(self.mongo_uri)
@@ -45,7 +50,7 @@ class TestRPC(TestCase):
         client = MongoRPCClient(self.mongo_uri)
         print(client.hello())
 
-        self.assertEqual(rpc.call(**rpc.poll()), "world")
+        self.assertEqual(self.poll_and_call(rpc), "world")
 
     def test_call_with_named_arg(self):
         rpc = MongoRPC(self.mongo_uri)
@@ -57,7 +62,7 @@ class TestRPC(TestCase):
         client = MongoRPCClient(self.mongo_uri)
         print(client.hello(msg="world"))
 
-        self.assertEqual(rpc.call(**rpc.poll()), "world")
+        self.assertEqual(self.poll_and_call(rpc), "world")
 
 
     def test_call_with_arg_list(self):
@@ -70,7 +75,7 @@ class TestRPC(TestCase):
         client = MongoRPCClient(self.mongo_uri)
         print(client.hello(123, "world"))
 
-        self.assertEqual(rpc.call(**rpc.poll()), (123, "world"))
+        self.assertEqual(self.poll_and_call(rpc), (123, "world"))
 
     def test_call_with_mixed_args(self):
         rpc = MongoRPC(self.mongo_uri)
@@ -82,7 +87,7 @@ class TestRPC(TestCase):
         client = MongoRPCClient(self.mongo_uri)
         print(client.hello(123, "world", wat=1.0))
 
-        self.assertEqual(rpc.call(**rpc.poll()), (123, "world", 1.0))
+        self.assertEqual(self.poll_and_call(rpc), (123, "world", 1.0))
 
     # def test_error(self):
     #     rpc = MongoRPC()
