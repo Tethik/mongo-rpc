@@ -65,7 +65,6 @@ class MongoRPC(object):
         for arg in defined_args:
             if arg in kwargs:
                 converted[arg] = kwargs[arg]
-        print(args)
         return self.factory[method](*args, **converted)
 
     def report_failure(self, item, error):
