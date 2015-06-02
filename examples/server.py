@@ -4,6 +4,6 @@ rpc = MongoRPC()
 
 @rpc.register()
 def hello():
-  print("hello world")
+  print("hello {}".format(msg))
 
 rpc.start()

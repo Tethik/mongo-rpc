@@ -84,7 +84,7 @@ class MongoRPC(object):
             sleep(self.polling_interval)
 
     def remove_all_requests(self):
-        self.db[self.collection].remove({})
+        self.db[self.collection].delete_many({})
 
 class ScheduledMongoRPC(MongoRPC):
     def poll(self):

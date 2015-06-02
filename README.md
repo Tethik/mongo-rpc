@@ -10,8 +10,8 @@ from mongorpc import MongoRPC
 rpc = MongoRPC()
 
 @rpc.register()
-def hello():
-  print("hello world")
+def hello(msg):
+  print("hello {}".format(msg))
 
 rpc.start()
 ```
@@ -25,7 +25,7 @@ client.hello()
 ```
 
 # Future work
-* Conform to [http://www.jsonrpc.org/specification](jsonrpc standard).
+* Conform to [jsonrpc standard](http://www.jsonrpc.org/specification).
 * Save results from method call.
 * Transaction safety, to support more than one executing server?
 * Perhaps serialize method code. Eggify?
