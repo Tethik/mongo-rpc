@@ -20,7 +20,7 @@ class MongoRPCClient(object):
             'args': args,
             'kwargs': kwargs,
         } # todo add id...
-        return self.db[self.collection].insert_one(request).inserted_id
+        return self.db[self.collection].insert(request)
 
 
     def __getattr__(self, name):
@@ -72,7 +72,9 @@ class MongoRPC(object):
         self.db[self.error_collection].insert(item)
 
     def poll(self):
-        return self.db[self.collection].find_one_and_delete({})
+        item = self.db[self.collection].find_one({})
+        self.db[self.collection].remove(item)
+        return item
 
     def start(self):
         self.run()
@@ -89,7 +91,7 @@ class MongoRPC(object):
             sleep(self.polling_interval)
 
     def remove_all_requests(self):
-        self.db[self.collection].delete_many({})
+        self.db[self.collection].remove({})
 
 class ScheduledMongoRPC(MongoRPC):
     def poll(self):
