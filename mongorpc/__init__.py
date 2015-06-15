@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from inspect import signature
+import inspect
 from time import sleep
 
 class MongoRPCClient(object):
@@ -61,7 +61,7 @@ class MongoRPC(object):
     def call(self, method, args, kwargs):
         f = self.factory[method]
         converted = dict()
-        defined_args = signature(f).parameters.keys()
+        defined_args,_,_,_ = inspect.getargspec(f) # signature(f).parameters.keys()
         for arg in defined_args:
             if arg in kwargs:
                 converted[arg] = kwargs[arg]
