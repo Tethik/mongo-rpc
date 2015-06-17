@@ -1,5 +1,8 @@
 from unittest import TestCase
 from mongorpc import MongoRPC, MongoRPCClient
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 class TestRPC(TestCase):
 

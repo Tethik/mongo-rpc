@@ -1,5 +1,7 @@
 from mongorpc import MongoRPC
+import logging
 
+logging.basicConfig(level=logging.INFO)
 rpc = MongoRPC()
 
 @rpc.register()

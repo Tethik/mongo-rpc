@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import inspect
 from time import sleep
+import logging
 
 class MongoRPCClient(object):
     def __init__(self, mongo_uri="mongodb://localhost:27017/default",
@@ -84,9 +85,11 @@ class MongoRPC(object):
             item = self.poll()
             try:
                 if item:
+                    logging.info("RPC-Call {}".format(item["method"]))
                     self.call(item["method"], item["args"], item["kwargs"])
                     continue
             except Exception as err:
+                logging.error(err)
                 self.report_failure(item, err)
             sleep(self.polling_interval)
 
